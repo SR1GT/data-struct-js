@@ -44,14 +44,3 @@ class Graph {
     throw new Error("Vertex not found");
   }
 }
-
-var myGraph = new Graph();
-myGraph.addVertex("A");
-myGraph.addVertex("B");
-myGraph.addVertex("C");
-myGraph.addEdge("A", "B");
-myGraph.addEdge("A", "C");
-myGraph.addEdge("B", "C");
-console.log(myGraph);
-myGraph.removeVertex("A");
-console.log(myGraph);
