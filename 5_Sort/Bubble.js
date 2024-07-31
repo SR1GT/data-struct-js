@@ -1,4 +1,4 @@
-Array.prototype.bubble = function () {
+Array.prototype.bubbleSort = function () {
   for (let i = this.length - 1; i > 0; i--)
     for (let j = 0; j < i; j++)
       if (this[j] > this[j + 1])
@@ -6,4 +6,4 @@ Array.prototype.bubble = function () {
   return this;
 };
 
-console.log([4, 2, 3, 1, 5].bubble());
+console.log([4, 2, 3, 1, 5].bubbleSort());

@@ -1,4 +1,4 @@
-Array.prototype.quick = function (left = 0, right = this.length - 1) {
+Array.prototype.quickSort = function (left = 0, right = this.length - 1) {
   const pivot = (pivotIndex, endIndex) => {
     let temp = pivotIndex;
     for (let i = pivotIndex + 1; i <= endIndex; i++)
@@ -10,10 +10,10 @@ Array.prototype.quick = function (left = 0, right = this.length - 1) {
 
   if (left < right) {
     const pivotIndex = pivot(left, right);
-    this.quick(left, pivotIndex - 1);
-    this.quick(pivotIndex + 1, right);
+    this.quickSort(left, pivotIndex - 1);
+    this.quickSort(pivotIndex + 1, right);
   }
   return this;
 };
 
-console.log([4, 2, 3, 1, 5].quick());
+console.log([4, 2, 3, 1, 5].quickSort());

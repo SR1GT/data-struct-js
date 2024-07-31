@@ -1,4 +1,4 @@
-Array.prototype.insertion = function () {
+Array.prototype.insertionSort = function () {
   let temp, j;
   for (let i = 1; i < this.length; i++) {
     (temp = this[i]), (j = i - 1);
@@ -8,4 +8,4 @@ Array.prototype.insertion = function () {
   return this;
 };
 
-console.log([4, 2, 3, 1, 5].insertion());
+console.log([4, 2, 3, 1, 5].insertionSort());

@@ -1,4 +1,4 @@
-Array.prototype.selection = function () {
+Array.prototype.selectionSort = function () {
   let minIndex = this[0];
   for (let i = 0; i < this.length - 1; i++) {
     minIndex = i;
@@ -9,4 +9,4 @@ Array.prototype.selection = function () {
   return this;
 };
 
-console.log([4, 2, 3, 1, 5].selection());
+console.log([4, 2, 3, 1, 5].selectionSort());

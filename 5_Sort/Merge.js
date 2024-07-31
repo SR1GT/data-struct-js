@@ -1,4 +1,4 @@
-Array.prototype.merge = function () {
+Array.prototype.mergeSort = function () {
   if (this.length <= 1) return this;
 
   const merge = (array1, array2) => {
@@ -14,7 +14,7 @@ Array.prototype.merge = function () {
   let mid = Math.floor(this.length / 2),
     left = this.slice(0, mid),
     right = this.slice(mid);
-  return merge(left.merge(), right.merge());
+  return merge(left.mergeSort(), right.mergeSort());
 };
 
-console.log([4, 2, 3, 1, 5].merge());
+console.log([4, 2, 3, 1, 5].mergeSort());
