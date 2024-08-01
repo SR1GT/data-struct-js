@@ -1017,7 +1017,7 @@ class Tree {
 从后出发，比较并交换，使最后一个值为最大值，进入下一个，重复上述操作
 
 ```js
-Array.prototype.bubble = function () {
+Array.prototype.bubbleSort = function () {
   for (let i = this.length - 1; i > 0; i--)
     for (let j = 0; j < i; j++)
       if (this[j] > this[j + 1])
@@ -1025,7 +1025,7 @@ Array.prototype.bubble = function () {
   return this;
 };
 
-console.log([4, 2, 3, 1, 5].bubble());
+console.log([4, 2, 3, 1, 5].bubbleSort());
 ```
 
 ## （2）选择排序
@@ -1033,7 +1033,7 @@ console.log([4, 2, 3, 1, 5].bubble());
 （冒泡排序的逆向）从头出发，记录当前位置以后的最小值的索引，比较并交换，进入下一个，重复上述操作
 
 ```js
-Array.prototype.selection = function () {
+Array.prototype.selectionSort = function () {
   let minIndex = this[0];
   for (let i = 0; i < this.length - 1; i++) {
     minIndex = i;
@@ -1044,7 +1044,7 @@ Array.prototype.selection = function () {
   return this;
 };
 
-console.log([4, 2, 3, 1, 5].selection());
+console.log([4, 2, 3, 1, 5].selectionSort());
 ```
 
 ## （3）插入排序
@@ -1052,29 +1052,28 @@ console.log([4, 2, 3, 1, 5].selection());
 从第二项出发，找到比当前值小的值，该小值以后的值后移一位，小值后面插入到当前值，进入下一个，重复此操作
 
 ```js
-Array.prototype.insertion = function () {
+Array.prototype.insertionSort = function () {
+  let temp, j;
   for (let i = 1; i < this.length; i++) {
-    let temp = this[i];
-    for (var j = i - 1; this[j] > temp && j >= 0; j--) this[j + 1] = this[j];
+    (temp = this[i]), (j = i - 1);
+    for (; this[j] > temp && j >= 0; j--) this[j + 1] = this[j];
     this[j + 1] = temp;
   }
   return this;
 };
 
-console.log([4, 2, 3, 1, 5].insertion());
+console.log([4, 2, 3, 1, 5].insertionSort());
 ```
 
-## （4）合并排序
+## （4）归并排序
 
-将数组递归二分分组，直至每组只有两个数字，比较并交换后逐步合并各组至原数组大小
+将数组递归二分分组，直至每组只有两个数字，比较并交换后逐步归并各组至原数组大小
 
-1. 编写 `merge` 方法，用于按大小合并两个数组
+1. 编写 `merge` 方法，用于按大小归并两个数组
 
    ```js
    const merge = (array1, array2) => {
-     let i = 0,
-       j = 0,
-       result = [];
+     let i = 0, j = 0, result = [];
      while (i < array1.length && j < array2.length)
        if (array1[i] < array2[j]) result.push(array1[i++]);
        else result.push(array2[j++]);
@@ -1087,7 +1086,7 @@ console.log([4, 2, 3, 1, 5].insertion());
 2. 结合合并方法，完成合并排序方法
 
    ```js
-   Array.prototype.merge = function () {
+   Array.prototype.mergeSort = function () {
      if (this.length <= 1) return this;
    
      const merge = (array1, array2) => {/*...*/};
@@ -1095,10 +1094,10 @@ console.log([4, 2, 3, 1, 5].insertion());
      let mid = Math.floor(this.length / 2),
        left = this.slice(0, mid),
        right = this.slice(mid);
-     return merge(left.merge(), right.merge());
+     return merge(left.mergeSort(), right.mergeSort());
    };
    
-   console.log([4, 2, 3, 1, 5].merge());
+   console.log([4, 2, 3, 1, 5].mergeSort());
    ```
 
 ## （5）快速排序
@@ -1108,14 +1107,12 @@ console.log([4, 2, 3, 1, 5].insertion());
 1. 编写 `pivot` 方法，用于获取数组中心值的索引
 
    ```js
-   const pivot = (array, pivotIndex, endIndex) => {
+   const pivot = (pivotIndex, endIndex) => {
      let temp = pivotIndex;
      for (let i = pivotIndex + 1; i <= endIndex; i++)
-       if (array[i] < array[pivotIndex]) {
-         temp++;
-         [array[temp], array[i]] = [array[i], array[temp]];
-       }
-     [array[pivotIndex], array[temp]] = [array[temp], array[pivotIndex]];
+       if (this[i] < this[pivotIndex])
+         [this[temp], this[i]] = [this[i], this[++temp]];
+     [this[pivotIndex], this[temp]] = [this[temp], this[pivotIndex]];
      return temp;
    };
    ```
@@ -1123,17 +1120,419 @@ console.log([4, 2, 3, 1, 5].insertion());
 2. 结合中心值索引获取方法，完成快速排序方法
 
    ```js
-   Array.prototype.quick = function (left = 0, right = this.length - 1) {
+   Array.prototype.quickSort = function (left = 0, right = this.length - 1) {
      const pivot = (pivotIndex, endIndex) => {/*...*/};
    
      if (left < right) {
        const pivotIndex = pivot(left, right);
-       this.quick(left, pivotIndex - 1);
-       this.quick(pivotIndex + 1, right);
+       this.quickSort(left, pivotIndex - 1);
+       this.quickSort(pivotIndex + 1, right);
      }
      return this;
    };
+   
+   console.log([4, 2, 3, 1, 5].quickSort());
    ```
 
-   
+## （6）计数排序
 
+在数组中记录每个数的出现次数，借助数组的有序性，完成原数组的排序
+
+> 也可以不记录出现次数，而是分别组成数组后连接
+
+```js
+Array.prototype.countingSort = function () {
+  let counter = [];
+  for (let item of this)
+    if (counter[item]) counter[item].push(item);
+    else counter[item] = [item];
+  this.length = 0;
+  for (let item of counter) if (item) Array.prototype.push.apply(this, item);
+  return this;
+};
+
+console.log([4, 2, 3, 1, 5].countingSort());
+```
+
+## （7）基数排序
+
+（基于桶排序）将每个数分别按个位数排序后重组，再依次按十位数、百位数直至最高位，重复上述操作
+
+1. 编写 `regroup` 方法，用于按指定位排序所有数并重组
+
+   ```js
+   const regroup = (array, digit = 1) => {
+     let buckets = Array.from({ length: 10 }, () => []),
+       flag = false,
+       digitPow = Math.pow(10, digit - 1);
+     for (let item of array) {
+       if (!flag && item >= digitPow * 10) flag = true;
+       buckets[Math.floor((item / digitPow) % 10)].push(item);
+     }
+     array = buckets.reduce((acc, curr) => acc.concat(curr), []);
+     return flag ? regroup(array, digit + 1) : array;
+   };
+   ```
+
+2. 结合排序重组方法，完成基数排序方法
+
+   ```js
+   Array.prototype.radixSort = function (digit = 1) {
+     if (this.length < 2) return this;
+   
+     const regroup = (array, digit = 1) => {/*...*/};
+   
+     return regroup(this);
+   };
+   
+   console.log([4, 2, 3, 1, 5].radixSort());
+   ```
+
+# 0x06 查找算法
+
+## （1）顺序查找
+
+（又称线性搜索）通过遍历数组一一对比搜索
+
+```js
+Array.prototype.orderSearch = function (target) {
+  for (let index in this) if (this[index] === target) return index;
+  return -1;
+};
+
+console.log([0, 1, 2, 3, 4].orderSearch(2));
+```
+
+## （2）二分查找
+
+记录每个数的索引后将数组排序，通过二分法递归查找出目标数的索引
+
+1. 编写 `divide` 方法，用于二分
+
+   ```js
+   const divide = (map, target, low = 0, high = this.length - 1) => {
+     if (low > high) return -1;
+     let mid = Math.floor((low + high) / 2);
+     if (map[mid].value === target) return map[mid].index;
+     else if (map[mid].value > target) return divide(map, target, low, mid - 1);
+     else if (map[mid].value < target) return divide(map, target, mid + 1, high);
+     else return -1;
+   };
+   ```
+
+2. 结合二分方法，完成二分查找方法
+
+   ```js
+   Array.prototype.binarySearch = function (target) {
+     if (this.length === 0) return -1;
+   
+     const divide = (map, target, low = 0, high = this.length - 1) => {/*...*/};
+   
+     let map = new Array();
+     this.map((value, index) => map.push({ value: value, index: index }));
+     map.sort((a, b) => a.value - b.value);
+     return divide(map, target);
+   };
+   
+   console.log([1, 0, 2, 4, 3].binarySearch(2));
+   ```
+
+## （3）内插查找
+
+（基于二分查找）优化了 `mid` 的计算方法，使 `mid` 为范围中目标值的相对位置（如 30%），而非默认中间
+
+1. 修改 `divide` 方法
+
+   ```js
+   const divide = (map, target, low = 0, high = this.length - 1) => {
+     if (low > high || target < map[low].value || target > map[high].value)
+       return -1;
+     let mid =
+       low +
+       Math.floor(
+         (
+           (target - map[low].value) / (map[high].value - map[low].value)
+         ) * (high - low)
+       );
+   
+     if (map[mid].value === target) return map[mid].index;
+     else if (map[mid].value > target) return divide(map, target, low, mid - 1);
+     else if (map[mid].value < target) return divide(map, target, mid + 1, high);
+     else return -1;
+   };
+   ```
+
+2. 其他与二分查找相同
+
+   ```js
+   Array.prototype.insertionSearch = function (target) {
+     if (this.length === 0) return -1;
+   
+     const divide = (map, target, low = 0, high = this.length - 1) => {/*...*/};
+   
+     let map = new Array();
+     this.map((value, index) => map.push({ value: value, index: index }));
+     map.sort((a, b) => a.value - b.value);
+     return divide(map, target);
+   };
+   
+   console.log([1, 0, 2, 4, 3].insertionSearch(2));
+   ```
+
+# 0x07 其他算法
+
+## （1）随机算法
+
+用于将数组打乱顺序，且通过处理位置前于当前数，使得不会处理已经经过随机的数
+
+```js
+Array.prototype.shuffle = function () {
+  for (let i = this.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [this[i], this[randomIndex]] = [this[randomIndex], this[i]];
+  }
+  return this;
+};
+
+console.log([1, 2, 3, 4, 5].shuffle());
+```
+
+## （2）动态规划
+
+实现动态规划的重要步骤：
+
+1. 定义状态
+2. 状态转移方程
+3. 初始化与边界条件
+
+### a. 背包问题
+
+> 存在一个背包，能携带限定空间的物品，而每个物品有各自的空间与价值，如何实现有限空间携带的价值最大
+
+* 背包大小：10
+
+* 物品大小与价值：
+
+  | 编号 | 大小 | 价值 |
+  | ---- | ---- | ---- |
+  | 0    | 2    | 6    |
+  | 1    | 2    | 3    |
+  | 2    | 6    | 5    |
+  | 3    | 5    | 4    |
+  | 4    | 4    | 6    |
+
+* 动态规划表
+
+  | 编号 | 大小 | 价值 |  0   |  1   |  2   |  3   |   4   |  5   |   6    |   7    |    8    |  9   |   10    |
+  | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :---: | :--: | :----: | :----: | :-----: | :--: | :-----: |
+  |  0   |  2   |  6   |  0   |  0   | 6(0) |  6   |   6   |  6   |   6    |   6    |    6    |  6   |    6    |
+  |  1   |  2   |  3   |  0   |  0   |  6   |  6   | 9(01) |  9   |   9    |   9    |    9    |  9   |    9    |
+  |  2   |  6   |  5   |  0   |  0   |  6   |  6   |   9   |  9   |   9    |   9    | 11(02)  |  11  | 14(012) |
+  |  3   |  5   |  4   |  0   |  0   |  6   |  6   |   9   |  9   |   9    | 10(03) |   11    |  11  |   14    |
+  |  4   |  4   |  6   |  0   |  0   |  6   |  6   |   9   |  9   | 12(04) |   12   | 15(014) |  15  |   15    |
+
+* 代码实现
+
+  ```js
+  function knapsackDP(weights, values, total) {
+    let dp = new Array(weights.length); // rows
+    dp[-1] = new Array(total + 1).fill(0); // columns
+    for (let row = 0; row < weights.length; row++) {
+      dp[row] = new Array(total).fill(0);
+      for (let col = 0; col <= total; col++) {
+        if (col < weights[row]) dp[row][col] = dp[row - 1][col];
+        else
+          dp[row][col] = Math.max(
+            dp[row - 1][col],
+            dp[row - 1][col - weights[row]] + values[row]
+          );
+      }
+    }
+    return dp[weights.length - 1][total];
+  }
+  
+  console.log(knapsackDP([2, 2, 6, 5, 4], [6, 3, 5, 4, 6], 10));
+  ```
+
+### b. 最长公共子序列问题
+
+> 在两个字符串中，找到出现顺序相同、可以不连续的字符串
+
+* 字符串：
+
+  1. acbaed
+  2. abcadf
+
+* 最长公共子序列：acad
+
+* 动态规划表
+
+  |       |      | **a** | **b** | **c** | **a** | **d** | **f** |
+  | :---: | :--: | :---: | :---: | :---: | :---: | :---: | :---: |
+  |       |  0   |   0   |   0   |   0   |   0   |   0   |   0   |
+  | **a** |  0   | **1** |   1   |   1   |   1   |   1   |   1   |
+  | **c** |  0   |   1   |   1   | **2** |   2   |   2   |   2   |
+  | **b** |  0   |   1   |   2   |   2   |   2   |   2   |   2   |
+  | **a** |  0   |   1   |   2   |   2   | **3** |   3   |   3   |
+  | **e** |  0   |   1   |   2   |   2   |   3   |   3   |   3   |
+  | **d** |  0   |   1   |   2   |   2   |   3   | **4** |   4   |
+
+* 代码实现
+
+  ```js
+  function LCS(string1, string2) {
+    let dp = [new Array(string2.length + 1).fill(0)],
+      result = "";
+    for (let row = 1; row <= string1.length; row++) {
+      dp[row] = [0];
+      for (let col = 1; col <= string2.length; col++) {
+        if (string1[row - 1] === string2[col - 1]) {
+          dp[row][col] = dp[row - 1][col - 1] + 1;
+          if (
+            dp[row][col] > dp[row - 1][col] &&
+            dp[row][col] > dp[row][col - 1] &&
+            result.length === dp[row][col] - 1
+          )
+            result += string1[row - 1];
+        } else dp[row][col] = Math.max(dp[row - 1][col], dp[row][col - 1]);
+      }
+    }
+    return result;
+  }
+  
+  console.log(LCS("acbaed", "abcadf"));
+  ```
+
+## （3）贪心算法
+
+* 特点是求解时，仅选择局部最优解，而非从全局考虑
+
+* 举例：背包问题
+
+  将每个物品按标准赋分，将分数降序排序，依次取最高分并放入背包
+
+  ```js
+  function knapsackGreedy(weights, values, total) {
+    let marks = [];
+    for (let index = 0; index < weights.length; index++)
+      marks.push({
+        id: index,
+        weight: weights[index],
+        value: values[index],
+        mark: values[index] / weights[index],
+      });
+    marks.sort((a, b) => b.mark - a.mark);
+  
+    let selections = [],
+      valueTotal = 0;
+    for (let item of marks) {
+      if (item.weight <= total) {
+        selections.push({
+          id: item.id,
+          weights: item.weight,
+          values: item.value,
+          rate: 1,
+        });
+        total -= item.weight;
+        valueTotal += item.value;
+      } else if (total > 0) {
+        const rate = total / item.weight;
+        selections.push({
+          id: item.id,
+          weights: item.weight * rate,
+          values: item.value * rate,
+          rate: rate,
+        });
+        valueTotal += item.value * rate;
+        break;
+      } else break;
+    }
+    return valueTotal;
+  }
+  
+  console.log(knapsackGreedy([2, 2, 6, 5, 4], [6, 3, 5, 4, 6], 10));
+  ```
+
+## （4）回溯算法
+
+* 本质上是试错，即遇到错误结果后，回溯到上一步，选择其他路径
+
+* 举例：给定一个字符串，判断在某个字符表中，能否通过相邻的字符拼接出这个字符串
+
+  字符串：ABCCED
+
+  字符表：
+
+  <table style="text-align: center">
+      <tr>
+          <td>A</td>
+          <td>B</td>
+          <td>C</td>
+          <td>E</td>
+      </tr>
+      <tr>
+          <td>S</td>
+          <td>F</td>
+          <td>C</td>
+          <td>S</td>
+      </tr>
+      <tr>
+          <td>A</td>
+          <td>D</td>
+          <td>E</td>
+          <td>E</td>
+      </tr>
+  </table>
+
+  1. 编写 `find` 方法，用于通过递归实现回溯查找目标路径
+
+     ```js
+     const find = (row, col, index = 0) => {
+       if (
+         row >= board.length ||
+         row < 0 ||
+         col >= board[0].length ||
+         col < 0 ||
+         board[row][col] !== target[index]
+       )
+         return false;
+       if (index === target.length - 1) return true;
+     
+       const temp = board[row][col];
+       board[row][col] = null;
+       const result =
+         find(row + 1, col, index + 1) ||
+         find(row - 1, col, index + 1) ||
+         find(row, col + 1, index + 1) ||
+         find(row, col - 1, index + 1);
+       board[row][col] = temp;
+     
+       return result;
+     };
+     ```
+
+  2. 结合递归回溯查找方法，完成回溯算法
+
+     ```js
+     function exist(board, target) {
+       const find = (row, col, index = 0) => {/*...*/};
+     
+       for (let row = 0; row < board.length; row++)
+         for (let col = 0; col < board[row].length; col++)
+           if (find(row, col, 0)) return true;
+       return false;
+     }
+     
+     console.log(
+       exist(
+         [
+           ["A", "B", "C", "E"],
+           ["S", "F", "C", "S"],
+           ["A", "D", "E", "E"],
+         ],
+         "ABCCED"
+       )
+     );
+     ```
+
+  
